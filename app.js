@@ -1,7 +1,10 @@
-require("dotenv").config();
+require('dotenv').config();
+
 
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
+const session = require('express-session');
+const flash = require('express-flash');
 const connectDB = require('./server/config/db')
 
 const app = express();
@@ -21,6 +24,21 @@ app.set('layout', './layouts/main'); // Ensure the correct path to your layout f
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
+
+// Session
+app.use(
+    session({
+        secret: 'secret',
+        resave: false,
+        saveUninitialized: true,
+        cookie:{
+            maxAge: 1000 * 60 * 60 * 24 * 7,
+        }
+    })
+);
+
+// Flash messages
+app.use(flash());
 
 // Routes
 app.use('/', require('./server/routes/task'));

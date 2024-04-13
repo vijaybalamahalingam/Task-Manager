@@ -1,15 +1,20 @@
+const Task = require('../models/task');
+
 exports.homepage = async (req, res) => {
+
+   const message = req.flash('info');
+
    const locals = {
-    title: 'Hompage',
+    title: 'Homepage',
     description: 'Task Manager'
    }
 
-   res.render('index', locals);
+   res.render('index', { locals, message });
 }
 
 exports.addTask = async (req, res) => {
    const locals = {
-    title: ' Add Task',
+    title: 'Add Task',
     description: 'Task Manager'
    }
 
@@ -17,13 +22,17 @@ exports.addTask = async (req, res) => {
 }
 
 exports.postTask = async (req, res) => {
+   const taskData = {
+      taskName: req.body.taskName,
+      details: req.body.details
+   };
 
-   console.log(req.body);
-
-   const locals = {
-    title: 'New task added!',
-    description: 'Task Manager'
+   try {
+      await Task.create(taskData); 
+      req.flash('info', 'New task has been added!');
+      res.redirect('/');
+   } catch(error) {
+     console.error(error);
+     res.status(500).send('Internal Server Error');
    }
-
-   res.render('task/add', locals);
-}
+};
