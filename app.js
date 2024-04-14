@@ -3,6 +3,7 @@ require('dotenv').config();
 
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
+const methodOverride = require('method-override');
 const session = require('express-session');
 const flash = require('express-flash');
 const connectDB = require('./server/config/db')
@@ -23,6 +24,7 @@ app.set('layout', './layouts/main'); // Ensure the correct path to your layout f
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(methodOverride('_method'));
 app.use(express.static('public'));
 
 // Session

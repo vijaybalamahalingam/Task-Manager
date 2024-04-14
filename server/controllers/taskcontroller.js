@@ -45,7 +45,7 @@ exports.view = async (req, res) => {
  
      const locals = {
        title: "View Task",
-       description: "Free NodeJs User Management System",
+       description: "Task Manager",
      };
  
      res.render("task/view", {
@@ -53,7 +53,55 @@ exports.view = async (req, res) => {
        task
      });
    } catch (error) {
-     console.log(error);
+     console.error(error);
      res.status(500).send('Internal Server Error');
    }
  };
+
+ exports.edit = async (req, res) => {
+   try {
+     const task = await Task.findOne({ _id: req.params.id });
+ 
+     const locals = {
+       title: "Edit Task",
+       description: "Task Manager",
+     };
+ 
+     res.render("task/edit", {
+       locals,
+       task
+     });
+   } catch (error) {
+     console.error(error);
+     res.status(500).send('Internal Server Error');
+   }
+ };
+
+ exports.editPost = async (req, res) => {
+    try {
+        await Task.findOneAndUpdate(
+            { _id: req.params.id }, 
+            { 
+                taskName: req.body.taskName,
+                details: req.body.details,
+                updatedAt: Date.now()
+            },
+            { new: true } 
+        );
+
+        res.redirect(`/edit/${req.params.id}`);
+    } catch (error) {
+        console.error(error); 
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+exports.deleteTask = async (req, res) => {
+   try{
+      await Task.deleteOne({_id: req.params.id})
+      res.redirect("/")
+   } catch (error) {
+      console.error(error); 
+      res.status(500).send('Internal Server Error');
+  }
+};
